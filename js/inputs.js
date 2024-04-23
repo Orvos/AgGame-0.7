@@ -1,4 +1,3 @@
-import "./menus.js";
 let controllerIndex = null;
 let leftPressed = false;
 let rightPressed = false;

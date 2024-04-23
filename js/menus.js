@@ -1,4 +1,3 @@
-import "./menus.js";
 function newGame() {
     console.log("New Game");
     replace("title", '');
