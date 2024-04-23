@@ -32,6 +32,7 @@ function loadAnim(callbackFunction) {
 }
 
 function editQuiz() {
+    resetEditQuestions();
     console.log("Edit Quiz");
     replace("menu", menus.editQuestions);
     focusUpdate();
@@ -50,6 +51,7 @@ function home() {
     replace("title", `<h1>RUSS EDWARDS SCHOOL AGRICULTURE QUIZ</h1>`);
     document.getElementById("info").style.opacity = "0";
     focusFirst();
+    resetEditQuestions();
 }
 
 function focusUpdate(){
@@ -420,12 +422,13 @@ function saveQuestion(){
 }
 
 
+function resetEditQuestions(){
+    groupIndex = 0;
+    questionIndex = 0;
+    currentQuestion = questions.groups[0].questions[0].question;
+    currentQuestionGroup = questions.groups[0];
+}
 
-
-let groupIndex = 0;
-let questionIndex = 0;
-let currentQuestion = questions.groups[0].questions[0].question;
-let currentQuestionGroup = questions.groups[0];
-
+resetEditQuestions();
 focusUpdate();
 
