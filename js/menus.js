@@ -198,6 +198,7 @@ function newQuestion(correct){
         console.log("Incorrect Answer");
     }
     loadAnim(function() {
+        console.log(gameQuestions[currentQuizQuestion].answers.length);
         if(gameQuestions[currentQuizQuestion].answers.length == 2){
             replace("game", components.tfquiz);
             replace("currentQuestion", gameQuestions[currentQuizQuestion].question);
@@ -393,6 +394,7 @@ function setAnswers(){
         document.getElementById("answer4").value = questions.groups[groupIndex].questions[questionIndex].answers[3];
     }else{document.getElementById("answer4").value = null}
 }
+
 function saveQuestion(){
     var questionValue = document.getElementById('question').value;
     var answer1Value = document.getElementById('answer1').value;
@@ -400,18 +402,25 @@ function saveQuestion(){
     var answer3Value = document.getElementById('answer3').value;
     var answer4Value = document.getElementById('answer4').value;
 
+    var answers = [answer1Value, answer2Value, answer3Value, answer4Value];
+
+    for (var i = answers.length - 1; i >= 0; i--) {
+        if (answers[i] === "" || answers[i] === undefined || answers[i] === null) {
+            // If any answer value is empty, undefined, or null, remove it from the array
+            questions.groups[groupIndex].questions[questionIndex].answers.splice(i, 1);
+        } else {
+            // Otherwise, assign the answer value to the corresponding index
+            questions.groups[groupIndex].questions[questionIndex].answers[i] = answers[i];
+        }
+    }
+
     questions.groups[groupIndex].questions[questionIndex].question = questionValue;
-
-    questions.groups[groupIndex].questions[questionIndex].answers[0] = answer1Value;
-
-    questions.groups[groupIndex].questions[questionIndex].answers[1] = answer2Value;
-
-    questions.groups[groupIndex].questions[questionIndex].answers[2] = answer3Value;
-
-    questions.groups[groupIndex].questions[questionIndex].answers[3] = answer4Value;
 
     localStorage.setItem('questions', JSON.stringify(questions));
 }
+
+
+
 
 let groupIndex = 0;
 let questionIndex = 0;
