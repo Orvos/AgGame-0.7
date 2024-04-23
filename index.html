@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agriculture Quiz</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="./js/questions.js" defer></script>
+    <script src="./js/menus.js" defer></script>
+    <script src="./js/inputs.js" defer></script>
+
+</head>
+<body>
+    <div class="game" id="game">
+
+        <div class="circles" id="circles">
+            <div class="circle"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+        </div>
+
+        <div id="info" class="info">
+            <textarea name="question" id="question" cols="20" rows="5"></textarea>
+            <textarea name="" id="answer1" cols="20" rows="1"></textarea>
+            <textarea name="" id="answer2" cols="20" rows="1"></textarea>
+            <textarea name="" id="answer3" cols="20" rows="1"></textarea>
+            <textarea name="" id="answer4" cols="20" rows="1"></textarea>
+        </div>
+        <div class="title" id="title">
+            <h1>RUSS EDWARDS SCHOOL AGRICULTURE QUIZ</h1>
+        </div>
+
+        <div class="menu" id="menu">
+            <button autofocus onclick=newGame()><h2>New Game</h2></button>
+            <button onclick=editQuiz()><h2>Edit Quiz</h2></button>
+            <button onclick=highScores()><h2>Highscores</h2></button>
+        </div>
+
+    </div>
+
+
+
+</body>
+</html>
