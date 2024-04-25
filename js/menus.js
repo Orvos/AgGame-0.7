@@ -5,6 +5,7 @@ let maxButton = 2;
 let minButton = 0;
 let currentScore = 0;
 let gameGroup;
+let timer;
 
 
 
@@ -174,7 +175,10 @@ function startGame(i){
             replace("currentAnswer4", gameQuestions[0].answers[3]);
             replaceElementAttribute("currentAnswer4", "value", gameQuestions[0].answers[3]);
         }
+        timer = document.getElementById("questions")
+        timer.addEventListener("animationiteration", timerEnded);
     });
+    
 }
 
 function shuffleArray(array) {
@@ -187,24 +191,50 @@ function shuffleArray(array) {
     return array;
 }
 
+function timerEnded(event){
+    timeRemaining = 10 - event.elapsedTime;
+    console.log("the timer ended with " + timeRemaining + " seconds remaining");
+    submitAnswer("timeExpired");
+}
+
 function submitAnswer(answer){
-    if(currentAnswer == answer){
-        correct=true;
+    if(answer != "timeExpired"){
+
+        const computedStyle = window.getComputedStyle(timer);
+        const propertyValue = computedStyle.getPropertyValue("margin");
+        str = propertyValue.substring(0, propertyValue.length - 2);
+        timeElapsed = str * 10;
+        console.log(propertyValue);
+        console.log(str);
+        console.log(timeElapsed);
+        points = 1000 - timeElapsed*100;
+        points = Math.round(points); 
+
+        if(currentAnswer == answer){
+            correct=true;
+            score(points);
+        }else{
+            correct=false;
+        }
+        questionCount +=1;
+        if(questionCount >=10){
+            completeGame();
+            return;
+        }
+        newQuestion(correct);
     }else{
-        correct=false;
+        correct = false;
+        newQuestion(correct);
     }
-    questionCount +=1;
-    if(questionCount >=10){
-        completeGame();
-        return;
-    }
-    newQuestion(correct);
 }
 
 function score(i){
     currentScore += i;
 }
 function newQuestion(correct){
+
+
+
     if((currentQuizQuestion + 1) < gameQuestions.length){
         currentQuizQuestion += 1;
     }else{
@@ -244,6 +274,8 @@ function newQuestion(correct){
             replace("currentAnswer4", gameQuestions[currentQuizQuestion].answers[3]);
             replaceElementAttribute("currentAnswer4", "value", gameQuestions[currentQuizQuestion].answers[3]);
         }
+        timer = document.getElementById("questions")
+        timer.addEventListener("animationiteration", timerEnded);
     });
 }
 
@@ -287,17 +319,13 @@ menus = {
 }
 
 components = {
-    "loadingBar": `
-    <div id="timer-outer" class="component">
-        <div id="timer-inner"> </div>
-    </div>
-    `,
     "homeButton":`
         <button onclick="home()">
             <h2>Home</h2>
         </button>`,
     "quiz": `
         <div id="quiz">
+            <div class="questions timer" id="questions"></div>
             <div id="currentQuestion"></div> 
             <button id="currentAnswer1" onclick="submitAnswer(this.value)"></button> 
             <button id="currentAnswer2" onclick="submitAnswer(this.value)"></button> 
@@ -307,9 +335,10 @@ components = {
         `,
         "tfquiz":`
             <div id="quiz">
+            <div class="questions timer" id="questions"></div>
                 <div id="currentQuestion"></div> 
                 <button id="currentTFAnswer1" onclick="submitAnswer(this.value)"></button> 
-                <button id="currentTFAnswer2" onclick="submitAnswer(this.value)"></button> 
+                <button id="currentTFAnswer2" onclick="submitAnswer(this.value)"></button>
             </div>
         `,
         "correct":`
@@ -558,6 +587,17 @@ function reset(){
     resetEditQuestions();
     focusUpdate();
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 reset();
