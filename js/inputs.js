@@ -156,6 +156,9 @@ document.addEventListener("keydown", function(event) {
 
         case "4":
             keyYellow();
+
+        case "Escape":
+            keyWhite();
         
         default:
             break;
@@ -215,7 +218,10 @@ function keyYellow(){
 }
 
 function keyWhite(){
-
+    quiz = document.getElementById("quiz");
+    if(quiz){
+        home();
+    }
 }
 
 function keyWhite2(){

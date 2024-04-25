@@ -8,7 +8,7 @@ let minButton = 0;
 
 
 function newGame() {
-    console.log("New Game");
+    reset();
     replace("title", '');
     replace("menu", '');
     loadAnim(function() {
@@ -43,7 +43,6 @@ function loadAnim(callbackFunction) {
 
 function editQuiz() {
     resetEditQuestions();
-    console.log("Edit Quiz");
     replace("menu", menus.editQuestions);
     replace("title", `<h1>Edit Quiz</h1>`);
     questionGroups();
@@ -52,16 +51,13 @@ function editQuiz() {
 }
 
 function highScores() {
-    console.log("Highscores");
 }
 
 function home() {
-    console.log("home");
-    replace("menu", menus.main_menu);
-    replace("title", `<h1>RUSS EDWARDS SCHOOL AGRICULTURE QUIZ</h1>`);
-    document.getElementById("info").style.opacity = "0";
+    replace("game", screens.homeScreen);
     focusUpdate();
     resetEditQuestions();
+    reset();
 }
 
 function focusUpdate(){
@@ -102,7 +98,6 @@ function focusNext() {
 }
 
 function focusPrevious() {
-    console.log("focus previous");
     var currentFocus = document.activeElement;
     var firstIndex = 0;
     if (typeof visibleButtons[0] !== "undefined") {
@@ -216,13 +211,10 @@ function newQuestion(correct){
     shuffleArray(gameQuestions[currentQuizQuestion].answers);
     if(correct==true){
         replace("game", components.correct);
-        console.log("Correct Answer");
     }else{
         replace("game", components.incorrect);
-        console.log("Incorrect Answer");
     }
     loadAnim(function() {
-        console.log(gameQuestions[currentQuizQuestion].answers.length);
         if(gameQuestions[currentQuizQuestion].answers.length == 2){
             replace("game", components.tfquiz);
             replace("currentQuestion", gameQuestions[currentQuizQuestion].question);
@@ -315,6 +307,33 @@ components = {
         `,
 }
 
+screens = {
+    "homeScreen":
+        `
+        <div class="circles" id="circles">
+            <div class="circle"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+        </div>
+
+        <div id="info" class="info">
+            <textarea name="question" id="question" cols="20" rows="5"></textarea>
+            <textarea name="" id="answer1" cols="20" rows="1"></textarea>
+            <textarea name="" id="answer2" cols="20" rows="1"></textarea>
+            <textarea name="" id="answer3" cols="20" rows="1"></textarea>
+            <textarea name="" id="answer4" cols="20" rows="1"></textarea>
+        </div>
+        <div class="title" id="title">
+            <h1>RUSS EDWARDS SCHOOL AGRICULTURE QUIZ</h1>
+        </div>
+
+        <div class="menu" id="menu">
+            <button autofocus onclick=newGame()><h2>New Game</h2></button>
+            <button onclick=editQuiz()><h2>Edit Quiz</h2></button>
+            <button onclick=highScores()><h2>Highscores</h2></button>
+        </div>
+        `
+}
 function replace(elementId, newValue) {
     var element = document.getElementById(elementId);
     
@@ -394,7 +413,6 @@ function showMenuButtons(min,max){
     maxbutton = max;
 }
 
-
 function showNextButtons() {
     menuButtons = document.getElementsByTagName("button");
     remainingButtons = menuButtons.length - 1 - maxButton;
@@ -417,8 +435,6 @@ function showNextButtons() {
     }
     showMenuButtons(minButton,maxButton);
 }
-
-
 
 function showPreviousButtons() {
     menuButtons = document.getElementsByTagName("button");
@@ -443,9 +459,6 @@ function showPreviousButtons() {
     }
     showMenuButtons(minButton,maxButton);
 }
-
-
-
 
 function previousQuestion(){
     saveQuestion();
@@ -518,7 +531,16 @@ function resetEditQuestions(){
     currentQuestionGroup = questions.groups[0];
 }
 
+function reset(){
+     visibleButtons = [];
+    buttons = document.getElementsByTagName("button");
+    questionCount = 0;
+    maxButton = 2;
+    minButton = 0;
+}
 
+
+reset();
 
 focusUpdate();
 
