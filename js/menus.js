@@ -3,6 +3,8 @@ let buttons = document.getElementsByTagName("button");
 let questionCount = 0;
 let maxButton = 2;
 let minButton = 0;
+let currentScore = 0;
+let gameGroup;
 
 
 
@@ -55,8 +57,6 @@ function highScores() {
 
 function home() {
     replace("game", screens.homeScreen);
-    focusUpdate();
-    resetEditQuestions();
     reset();
 }
 
@@ -145,6 +145,7 @@ function chooseQuestionGroup(){
 }
 
 function startGame(i){
+    gameGroup = questions.groups[i];
     gameQuestions = questions.groups[i].questions;
     shuffleArray(gameQuestions);
     replace("title", '');
@@ -192,14 +193,17 @@ function submitAnswer(answer){
     }else{
         correct=false;
     }
-    
+    questionCount +=1;
     if(questionCount >=10){
         completeGame();
+        return;
     }
-    questionCount +=1;
     newQuestion(correct);
 }
 
+function score(i){
+    currentScore += i;
+}
 function newQuestion(correct){
     if((currentQuizQuestion + 1) < gameQuestions.length){
         currentQuizQuestion += 1;
@@ -211,8 +215,14 @@ function newQuestion(correct){
     shuffleArray(gameQuestions[currentQuizQuestion].answers);
     if(correct==true){
         replace("game", components.correct);
+        score(1);
+        replace("score", '<h2> Score:' + currentScore + '</h2>');
+        replace("remainingQuestions", '<h2> Questions: ' + questionCount + '/ 10</h2>');
     }else{
         replace("game", components.incorrect);
+        score(0);
+        replace("score", '<h2> Score:' + currentScore + '</h2>');
+        replace("remainingQuestions", '<h2> Questions: ' + questionCount + '/ 10</h2>');
     }
     loadAnim(function() {
         if(gameQuestions[currentQuizQuestion].answers.length == 2){
@@ -238,7 +248,10 @@ function newQuestion(correct){
 }
 
 function completeGame(){
-
+    gameScore = currentScore;
+    gameGroup = gameGroup;
+    console.log("game is complete, your score for " + gameGroup.title + " is " + gameScore);
+    home();
 }
 
 function clearComponents(){
@@ -300,10 +313,14 @@ components = {
             </div>
         `,
         "correct":`
+        <div id="score"></div>
         <div id=correct> <h1>CORRECT</h1></div>
+        <div id="remainingQuestions"></div>
         `,
         "incorrect":`
-        <div id=incorrect> <h1>INCORRECT</h1></div>
+        <div id="score"></div>
+        <div id="incorrect"> <h1>INCORRECT</h1></div>
+        <div id="remainingQuestions"></div>
         `,
 }
 
@@ -537,12 +554,12 @@ function reset(){
     questionCount = 0;
     maxButton = 2;
     minButton = 0;
+    currentScore = 0;
+    resetEditQuestions();
+    focusUpdate();
 }
 
 
 reset();
 
-focusUpdate();
-
-resetEditQuestions();
 
