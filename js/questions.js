@@ -43,7 +43,7 @@ if(localStorage.getItem("questions") == null){
                 "answers": ["15-18 months", "12-15 months","20 months", "24 months"],
                 },
                 {
-                "question": "True or False, chickens prefer to be housed in small group housing cages over free run.",
+                "question": "Chickens prefer to be housed in small group housing cages over free run.",
                 "answers": ["True", "False"],
                 },
                 {
@@ -79,12 +79,12 @@ if(localStorage.getItem("questions") == null){
                 "answers": ["False", "True"],
                 },
                 {
-                "question": "The use of hormones in beef are unsafe",
+                "question": "The use of hormones in beef is unsafe.",
                 "answers": ["False","True"],
                 },
                 {
                 "question": "Cows need this in order to ensure traceability",
-                "answers": ["An ear tag","A branding","Ear tattoo"],
+                "answers": ["An ear tag","A branding","An ear tattoo", "A tracking chip"],
                 },
                 {
                 "question": "How many turkeys does Manitoba raise annually?",
@@ -121,7 +121,7 @@ if(localStorage.getItem("questions") == null){
             ]
         },
     {
-            "title": "Test",
+            "title": "Test1",
             "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
             "enabled": true,
             "questions": [
@@ -134,7 +134,49 @@ if(localStorage.getItem("questions") == null){
                 "answers": ["25%", "50%", "10%", "65%"],
                 },
             ]
-        }]
+        },{
+            "title": "Test2",
+            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
+            "enabled": true,
+            "questions": [
+                {
+                "question": "This is a test question",
+                "answers": ["yes", "no", "maybe", "so"],
+                },
+                {
+                "question": "How much of Canada's grain land was seeded to canola in 2023?",
+                "answers": ["25%", "50%", "10%", "65%"],
+                },
+            ]
+        },{
+            "title": "Test3",
+            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
+            "enabled": true,
+            "questions": [
+                {
+                "question": "This is a test question",
+                "answers": ["yes", "no", "maybe", "so"],
+                },
+                {
+                "question": "How much of Canada's grain land was seeded to canola in 2023?",
+                "answers": ["25%", "50%", "10%", "65%"],
+                },
+            ]
+        },{
+            "title": "Test4",
+            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
+            "enabled": true,
+            "questions": [
+                {
+                "question": "This is a test question",
+                "answers": ["yes", "no", "maybe", "so"],
+                },
+                {
+                "question": "How much of Canada's grain land was seeded to canola in 2023?",
+                "answers": ["25%", "50%", "10%", "65%"],
+                },
+            ]
+        },]
     }
 }else{
     questions = JSON.parse(localStorage.getItem("questions"));

@@ -1,3 +1,12 @@
+let visibleButtons = [];
+let buttons = document.getElementsByTagName("button");
+let questionCount = 0;
+let maxButton = 2;
+let minButton = 0;
+
+
+
+
 function newGame() {
     console.log("New Game");
     replace("title", '');
@@ -5,6 +14,7 @@ function newGame() {
     loadAnim(function() {
         replace("menu", menus.gameStart);
         chooseQuestionGroup();
+        showMenuButtons(0,2);
     });
 }
 
@@ -28,17 +38,17 @@ function loadAnim(callbackFunction) {
         if (typeof callbackFunction === 'function') {
             callbackFunction();
         }
-    }, 1000);
+    }, 1600);
 }
 
 function editQuiz() {
     resetEditQuestions();
     console.log("Edit Quiz");
     replace("menu", menus.editQuestions);
-    focusUpdate();
     replace("title", `<h1>Edit Quiz</h1>`);
     questionGroups();
-    focusFirst();
+    showMenuButtons(0,2);
+    focusUpdate();
 }
 
 function highScores() {
@@ -50,59 +60,66 @@ function home() {
     replace("menu", menus.main_menu);
     replace("title", `<h1>RUSS EDWARDS SCHOOL AGRICULTURE QUIZ</h1>`);
     document.getElementById("info").style.opacity = "0";
-    focusFirst();
+    focusUpdate();
     resetEditQuestions();
 }
 
 function focusUpdate(){
-    buttons = document.getElementsByTagName("button");
+    let buttons = document.getElementsByTagName("button");
+    visibleButtons = [];
+    for(let i = 0; i < buttons.length; i++){
+        if(getComputedStyle(buttons[i]).display !== "none"){
+            visibleButtons.push(buttons[i]);
+        }
+    }
+    focusFirst();
 }
 
 function focusFirst(){
-    focusUpdate();
-    buttons[0].focus();
+    visibleButtons[0].focus();
 }
 
 function focusNext() {
     var currentFocus = document.activeElement;
-    var lastIndex = buttons.length - 1;
-    if (typeof buttons[0] !== "undefined")
-{
-        if (!currentFocus || !Array.from(buttons).includes(currentFocus)) {
-            buttons[0].focus();
+    var lastIndex = visibleButtons.length - 1;
+    if (typeof visibleButtons[0] !== "undefined") {
+        if (!currentFocus || !Array.from(visibleButtons).includes(currentFocus)) {
+            visibleButtons[0].focus();
             return;
         }
-        for (var i = 0; i < buttons.length; i++) {
-            if (buttons[i] === currentFocus) {
+        for (var i = 0; i < visibleButtons.length; i++) {
+            if (visibleButtons[i] === currentFocus) {
                 if (i < lastIndex) {
-                    buttons[i + 1].focus();
+                    visibleButtons[i + 1].focus();
                 } else {
-                    buttons[0].focus();
+                    showNextButtons();
+                     focusUpdate();
                 }
                 break;
-    }
+            }
         }
     }
 }
 
 function focusPrevious() {
+    console.log("focus previous");
     var currentFocus = document.activeElement;
     var firstIndex = 0;
-    if (typeof buttons[0] !== "undefined")
-    {
-    if (!currentFocus || !Array.from(buttons).includes(currentFocus)) {
-        buttons[buttons.length - 1].focus();
-        return;
-    }
-    for (var i = buttons.length - 1; i >= 0; i--) {
-        if (buttons[i] === currentFocus) {
-            if (i > firstIndex) {
-                buttons[i - 1].focus();
-            } else {
-                buttons[buttons.length - 1].focus();
+    if (typeof visibleButtons[0] !== "undefined") {
+        if (!currentFocus || !Array.from(visibleButtons).includes(currentFocus)) {
+            visibleButtons[visibleButtons.length - 1].focus();
+            return;
+        }
+        for (var i = visibleButtons.length - 1; i >= 0; i--) {
+            if (visibleButtons[i] === currentFocus) {
+                if (i > firstIndex) {
+                    visibleButtons[i - 1].focus();
+                } else {
+                    showPreviousButtons();
+                    visibleButtons[visibleButtons.length - 1].focus();
+                }
+                break;
             }
-            break;
-    }
         }
     }
 }
@@ -114,7 +131,7 @@ function editGroup(index) {
     document.getElementById("question").value = questions.groups[index].questions[0].question;
     setAnswers();
     document.getElementById("info").style.opacity = "1";
-    focusFirst();
+    focusUpdate();
 }
 
 function chooseQuestionGroup(){
@@ -128,8 +145,8 @@ function chooseQuestionGroup(){
             startGame(i);
         });
         document.getElementById("menu").appendChild(button);
-        focusUpdate();
     }
+    focusUpdate();
 }
 
 function startGame(i){
@@ -179,7 +196,12 @@ function submitAnswer(answer){
         correct=true;
     }else{
         correct=false;
-    }  
+    }
+    
+    if(questionCount >=10){
+        completeGame();
+    }
+    questionCount +=1;
     newQuestion(correct);
 }
 
@@ -353,9 +375,77 @@ function questionGroups() {
             editGroup(i);
         });
         document.getElementById("menu").appendChild(button);
-        focusUpdate();
     }
+        showMenuButtons(0,2);
+            focusUpdate();
 }
+
+function showMenuButtons(min,max){
+    menuButtons = document.getElementsByTagName("button");
+    for (let i = 0; i < menuButtons.length; i++){
+        if( i>= minButton && i <= maxButton){
+            menuButtons[i].style.display = "inline";
+        }else{
+            menuButtons[i].style.display = "none";
+        }
+    }
+    focusUpdate();
+    minButton = min;
+    maxbutton = max;
+}
+
+
+function showNextButtons() {
+    menuButtons = document.getElementsByTagName("button");
+    remainingButtons = menuButtons.length - 1 - maxButton;
+    if(remainingButtons >= 3){
+        minButton +=3;
+        maxButton +=3;
+    }else{
+        if(remainingButtons > 0 && remainingButtons <3){
+            
+            minButton += remainingButtons;
+            maxButton += remainingButtons;
+        }else{
+            minButton = 0;
+            if(menuButtons.length>=3){
+                maxButton = 2;
+            }else{
+                maxButton = menuButtons.length - 1;
+            }
+        }
+    }
+    showMenuButtons(minButton,maxButton);
+}
+
+
+
+function showPreviousButtons() {
+    menuButtons = document.getElementsByTagName("button");
+    previousButtons = minButton;
+    if(previousButtons >= 3){
+        minButton -=3;
+        maxButton -=3;
+    }else{
+        if(previousButtons > 0 && previousButtons <3){
+            
+            minButton += previousButtons;
+            maxButton += previousButtons;
+        }else{
+            if(menuButtons.length>=3){
+                minButton = menuButtons.length-3;
+                maxButton = menuButtons.length-1;
+            }else{
+                minButton =0;
+                maxButton = menuButtons.length - 1;
+            }
+        }
+    }
+    showMenuButtons(minButton,maxButton);
+}
+
+
+
 
 function previousQuestion(){
     saveQuestion();
@@ -421,7 +511,6 @@ function saveQuestion(){
     localStorage.setItem('questions', JSON.stringify(questions));
 }
 
-
 function resetEditQuestions(){
     groupIndex = 0;
     questionIndex = 0;
@@ -429,6 +518,9 @@ function resetEditQuestions(){
     currentQuestionGroup = questions.groups[0];
 }
 
-resetEditQuestions();
+
+
 focusUpdate();
+
+resetEditQuestions();
 

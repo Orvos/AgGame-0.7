@@ -27,7 +27,7 @@ function controllerInput(){
         
         if(gamepad.axes[0] == -1){
             if(leftPressed == false){
-                console.log("left");
+                keyLeft();
             }
             leftPressed = true;
         }else{
@@ -36,8 +36,7 @@ function controllerInput(){
 
         if(gamepad.axes[0] == 1){
             if(rightPressed == false){
-                console.log("right");
-                document.activeElement.click();
+                keyRight();
             }
             rightPressed = true;
         }else{
@@ -47,8 +46,7 @@ function controllerInput(){
 
         if(gamepad.axes[1] == -1 ){
             if(upPressed == false){
-                console.log("up");
-                focusPrevious();
+                keyUp();
             }
             upPressed = true;
         }else{
@@ -57,8 +55,7 @@ function controllerInput(){
 
         if(gamepad.axes[1] == 1){
             if(downPressed == false){
-                console.log("down");
-                focusNext();
+                keyDown();
             }
             downPressed = true;
         }else{
@@ -68,8 +65,7 @@ function controllerInput(){
 
         if(buttons[0].value == 1){
             if(bluePressed == false){
-                console.log("blue");
-                document.activeElement.click();
+                keyBlue();
             }
             bluePressed = true;
         }else{
@@ -78,8 +74,7 @@ function controllerInput(){
 
         if(buttons[1].value == 1){
             if(greenPressed == false){
-                console.log("green");
-                document.activeElement.click();
+                keyGreen();
             }
             greenPressed = true;
         }else{
@@ -89,8 +84,7 @@ function controllerInput(){
 
         if(buttons[2].value == 1){
             if(redPressed == false){
-                console.log("red");
-                document.activeElement.click();
+                keyRed();
             }
             redPressed = true;
         }else{
@@ -100,8 +94,7 @@ function controllerInput(){
 
         if(buttons[3].value == 1){
             if(yellowPressed == false){
-                console.log("yellow");
-                document.activeElement.click();
+                keyYellow();
             }
             yellowPressed = true;
         }else{
@@ -110,7 +103,7 @@ function controllerInput(){
 
         if(buttons[4].value == 1){
             if(whitePressed == false){
-                console.log("white");
+                keyWhite();
             }
             whitePressed = true;
         }else{
@@ -119,7 +112,7 @@ function controllerInput(){
 
         if(buttons[5].value == 1){
             if(white2Pressed == false){
-                console.log("white 2");
+                keyWhite2();
             }
             white2Pressed = true;
         }else{
@@ -127,6 +120,108 @@ function controllerInput(){
         }
     }
 }
+
+// Add event listener for keydown events
+document.addEventListener("keydown", function(event) {
+    const key = event.key;
+    switch (key) {
+        case "ArrowLeft":
+        case "a":
+            keyLeft();
+            break;
+
+        case "ArrowUp":
+        case "w":
+            keyUp();
+            break;
+
+        case "ArrowRight":
+        case "d":
+            keyRight();
+            break;
+
+        case "ArrowDown":
+        case "s":
+            keyDown();
+            break;
+
+        case "1":
+            keyRed();
+
+        case "2":
+            keyBlue();
+
+        case "3":
+            keyGreen();
+
+        case "4":
+            keyYellow();
+        
+        default:
+            break;
+    }
+});
+
+
+
+
+function keyUp(){
+    focusPrevious();
+}
+
+function keyDown(){
+    focusNext();
+}
+
+function keyLeft(){
+
+}
+
+function keyRight(){
+    document.activeElement.click();
+}
+
+function keyRed(){
+    if(document.getElementById("currentAnswer1")!=null){
+        document.getElementById("currentAnswer1").click();
+    }else if(document.getElementById("currentTFAnswer1")!=null){
+        document.getElementById("currentTFAnswer1").click();
+    }
+}
+
+function keyBlue(){
+    if(document.getElementById("currentAnswer2")!=null){
+        document.getElementById("currentAnswer2").click();
+    }else if(document.getElementById("currentTFAnswer2")!=null){
+        document.getElementById("currentTFAnswer2").click();
+    }
+}
+
+function keyGreen(){
+    if(document.getElementById("currentAnswer3")!=null){
+        document.getElementById("currentAnswer3").click();
+    }else if(document.getElementById("currentTFAnswer1")!=null){
+        document.getElementById("currentTFAnswer1").click();
+    }
+}
+
+function keyYellow(){
+    if(document.getElementById("currentAnswer4")!=null){
+        document.getElementById("currentAnswer4").click();
+    }else if(document.getElementById("currentTFAnswer2")!=null){
+        document.getElementById("currentTFAnswer2").click();
+    }
+    
+}
+
+function keyWhite(){
+
+}
+
+function keyWhite2(){
+
+}
+
 
 
 
