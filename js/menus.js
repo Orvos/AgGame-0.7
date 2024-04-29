@@ -1,12 +1,15 @@
 let visibleButtons = [];
-let buttons = document.getElementsByTagName("button");
+let buttons = document.getElementById("menu").getElementsByTagName("button");
 let questionCount = 0;
 let maxButton = 2;
 let minButton = 0;
 let currentScore = 0;
 let gameGroup;
 let timer;
-
+let currentQuestionGroup = 0;
+let letterToSelect;
+let selectedLetter;
+let scoreToEdit;
 
 
 
@@ -53,16 +56,73 @@ function editQuiz() {
     focusUpdate();
 }
 
-function highScores() {
+function newGroup(){
+    questions.groups.push(templates.newGroup);
+    localStorage.setItem('questions', JSON.stringify(questions));
+    reset();
+    editQuiz();
+}
+
+
+function highScores(currentQuestionGroup,scoreToEdit) {
+    console.log("highscores function. Parameters:" + currentQuestionGroup + scoreToEdit);
+    group = questions.groups[currentQuestionGroup];
+    scores = group.highScores;
+    replace("game", screens.scoreScreen);
+    replace("title", "<h1>" + group.title + "</h1>");
+    replace("highScoreName1" , scores[0][0]);
+    replace("highScoreScore1" , scores[0][1]);
+    replace("highScoreName2" , scores[1][0]);
+    replace("highScoreScore2" , scores[1][1]);
+    replace("highScoreName3" , scores[2][0]);
+    replace("highScoreScore3" , scores[2][1]);
+    replace("highScoreName4" , scores[3][0]);
+    replace("highScoreScore4" , scores[3][1]);
+    replace("highScoreName5" , scores[4][0]);
+    replace("highScoreScore5" , scores[4][1]);
+
+    if(arguments.length === 2){
+        nameToChange = "highScoreName" + (scoreToEdit+1).toString();
+        replace(nameToChange, components.editScoreName);
+        editLetters();
+    }
+    if(arguments.length >2){
+        home();
+    }
+}
+
+function nextScoreGroup(){
+    if(document.getElementById("highScores")!=undefined && document.getElementById("editScoreName") == undefined){
+        saveScore();
+        if(currentQuestionGroup >= questions.groups.length-1){
+            currentQuestionGroup = 0;
+        }else{
+            currentQuestionGroup += 1;
+        }
+        highScores(currentQuestionGroup);
+    }
+}
+
+function previousScoreGroup(){
+    if(document.getElementById("highScores")!=undefined && document.getElementById("editScoreName") == undefined){
+        saveScore();
+        if(currentQuestionGroup <= 0){
+            currentQuestionGroup = questions.groups.length-1;
+        }else{
+            currentQuestionGroup -= 1;
+        }
+        highScores(currentQuestionGroup);
+    }
 }
 
 function home() {
+    saveScore();
     replace("game", screens.homeScreen);
     reset();
 }
 
 function focusUpdate(){
-    let buttons = document.getElementsByTagName("button");
+    let buttons = document.getElementById("menu").getElementsByTagName("button");
     visibleButtons = [];
     for(let i = 0; i < buttons.length; i++){
         if(getComputedStyle(buttons[i]).display !== "none"){
@@ -90,7 +150,7 @@ function focusNext() {
                     visibleButtons[i + 1].focus();
                 } else {
                     showNextButtons();
-                     focusUpdate();
+                    focusUpdate();
                 }
                 break;
             }
@@ -122,12 +182,20 @@ function focusPrevious() {
 
 function editGroup(index) {
     replace("menu", menus.editGroup);
-    replace("title", '<h1>' + questions.groups[index].title + '</h1>');
+    replace("title", '<textarea id="titleText">' + questions.groups[index].title + '</textarea>');
     groupIndex = index;
     document.getElementById("question").value = questions.groups[index].questions[0].question;
     setAnswers();
-    document.getElementById("info").style.opacity = "1";
+    document.getElementById("info").style.display = "grid";
+    document.getElementById("cover").style.display = "grid";
     focusUpdate();
+    deleteButton = document.createElement("button");
+    document.getElementById("game").appendChild(deleteButton);
+    deleteButton.addEventListener('click', function() {
+        deleteGroup(index);
+    });
+    deleteButton.innerHTML = "<h2>Delete Entire Group</h2>";
+    deleteButton.classList.add("delete");
 }
 
 function chooseQuestionGroup(){
@@ -145,10 +213,22 @@ function chooseQuestionGroup(){
     focusUpdate();
 }
 
+function deleteGroup(i){
+    questions.groups.splice(i,1);
+    localStorage.setItem('questions', JSON.stringify(questions));
+        replace("game", screens.homeScreen);
+        showMenuButtons(0,2);
+}
+
+function hideCover(){
+    document.getElementById("cover").style.display = "none";
+}
 function startGame(i){
     gameGroup = questions.groups[i];
     gameQuestions = questions.groups[i].questions;
+    console.log(questions.groups[i].questions);
     shuffleArray(gameQuestions);
+    console.log(questions.groups[i].questions);
     replace("title", '');
     replace("menu", '');
     currentAnswer = gameQuestions[0].answers[0];
@@ -193,7 +273,6 @@ function shuffleArray(array) {
 
 function timerEnded(event){
     timeRemaining = 10 - event.elapsedTime;
-    console.log("the timer ended with " + timeRemaining + " seconds remaining");
     submitAnswer("timeExpired");
 }
 
@@ -204,9 +283,6 @@ function submitAnswer(answer){
         const propertyValue = computedStyle.getPropertyValue("margin");
         str = propertyValue.substring(0, propertyValue.length - 2);
         timeElapsed = str * 10;
-        console.log(propertyValue);
-        console.log(str);
-        console.log(timeElapsed);
         points = 1000 - timeElapsed*100;
         points = Math.round(points); 
 
@@ -231,6 +307,7 @@ function submitAnswer(answer){
 function score(i){
     currentScore += i;
 }
+
 function newQuestion(correct){
 
 
@@ -245,12 +322,10 @@ function newQuestion(correct){
     shuffleArray(gameQuestions[currentQuizQuestion].answers);
     if(correct==true){
         replace("game", components.correct);
-        score(1);
         replace("score", '<h2> Score:' + currentScore + '</h2>');
         replace("remainingQuestions", '<h2> Questions: ' + questionCount + '/ 10</h2>');
     }else{
         replace("game", components.incorrect);
-        score(0);
         replace("score", '<h2> Score:' + currentScore + '</h2>');
         replace("remainingQuestions", '<h2> Questions: ' + questionCount + '/ 10</h2>');
     }
@@ -279,11 +354,81 @@ function newQuestion(correct){
     });
 }
 
+function editLetters(){
+    letters = document.getElementById("editScoreName").getElementsByClassName("letters");
+    letterToSelect = 0;
+    selectedLetter = letters[0];
+    selectedLetter.style.animationName = "blinking";
+}
+
+function nextLetter(){
+    if(selectedLetter != undefined){
+        currentLetter = selectedLetter.innerHTML;
+        charCode = currentLetter.charCodeAt(0);
+        if(charCode <= 65){
+            charCode = 90;
+        }else{
+            charCode -= 1;
+        }
+        selectedLetter.innerHTML = String.fromCharCode(charCode);
+    }
+}
+
+function previousLetter(){
+    if(selectedLetter != undefined){
+        currentLetter = selectedLetter.innerHTML;
+        charCode = currentLetter.charCodeAt(0);
+        if(charCode >= 90){
+            charCode = 65;
+        }else{
+            charCode += 1;
+        }
+        selectedLetter.innerHTML = String.fromCharCode(charCode);
+    }
+}
+
+function rightLetter(){
+    if(selectedLetter != undefined){
+        if(letterToSelect >= letters.length-1){
+            letterToSelect = 0;
+        }else{
+            letterToSelect += 1;
+        }
+        selectedLetter.style.animationName = "";
+        selectedLetter = letters[letterToSelect];
+        selectedLetter.style.animationName = "blinking";
+    }
+}
+
+function leftLetter(){
+    if(selectedLetter != undefined){
+        if(letterToSelect <= 0){
+            letterToSelect = letters.length-1;
+        }else{
+            letterToSelect -= 1;
+        }
+        selectedLetter.style.animationName = "";
+        selectedLetter = letters[letterToSelect];
+        selectedLetter.style.animationName = "blinking";
+    }
+}
+
 function completeGame(){
     gameScore = currentScore;
-    gameGroup = gameGroup;
-    console.log("game is complete, your score for " + gameGroup.title + " is " + gameScore);
-    home();
+    scoreToEdit = -1;
+    for(let i=0; i<gameGroup.highScores.length; i++){
+        if(gameScore > gameGroup.highScores[i][1]){
+            gameGroup.highScores.splice(i,0,["",currentScore]);
+            gameGroup.highScores.pop();
+            scoreToEdit = i;
+            break;
+        }
+    }
+    if(scoreToEdit != -1){
+        highScores(currentQuestionGroup,scoreToEdit);
+    }else{
+        highScores(currentQuestionGroup);
+    }
 }
 
 function clearComponents(){
@@ -292,7 +437,23 @@ function clearComponents(){
         componentList[i].remove();
     }
 }
-
+templates= {
+    "newGroup": 
+    {
+        "title": "New QuestionGroup",
+        "highScores": [["NOR",5001],["TEM",4001],["RAC",3001],["GEO",2001],["WAN",1001],],
+        "questions": [{
+            "question": "Question 1",
+            "answers": ["Correct Answer", "Answer 2", "Answer 3", "Answer 4"],
+            },
+            {
+            "question": "Question 2",
+            "answers": ["Correct Answer", "Answer 2", "Answer 3", "Answer 4"],
+            },
+        ]
+    }
+    ,
+}
 menus = {
         "main_menu": 
 
@@ -300,7 +461,7 @@ menus = {
 
             <button onclick=editQuiz()><h2>Edit Quiz</h2></button>
 
-            <button onclick=highScores()><h2>Highscores</h2></button>`,
+            <button onclick=highScores(0)><h2>Highscores</h2></button>`,
 
         "editQuestions":
             `<button onclick="home()">
@@ -351,16 +512,32 @@ components = {
         <div id="incorrect"> <h1>INCORRECT</h1></div>
         <div id="remainingQuestions"></div>
         `,
+        "editScoreName":`
+            <div id="editScoreName">
+            <div id ="letter1" class="letters">A</div>
+            <div id ="letter2" class="letters">A</div>
+            <div id ="letter3" class="letters">A</div>
+            </div>
+        `,
+        "delete":
+        `
+        <button id="delete"></button>
+        `,
+        "newGroup":
+        `
+        <button id="newGroup">New Group<button/>
+        `,
 }
 
 screens = {
-    "homeScreen":
-        `
+    "homeScreen":`
         <div class="circles" id="circles">
             <div class="circle"></div>
             <div class="circle2"></div>
             <div class="circle3"></div>
         </div>
+
+        <div id="cover" onclick="hideCover()"><h2>Click to Reveal Answers</h2></div>
 
         <div id="info" class="info">
             <textarea name="question" id="question" cols="20" rows="5"></textarea>
@@ -376,9 +553,28 @@ screens = {
         <div class="menu" id="menu">
             <button autofocus onclick=newGame()><h2>New Game</h2></button>
             <button onclick=editQuiz()><h2>Edit Quiz</h2></button>
-            <button onclick=highScores()><h2>Highscores</h2></button>
+            <button onclick=highScores(0)><h2>Highscores</h2></button>
         </div>
-        `
+        `,
+        "scoreScreen":`
+        <div class="circles" id="circles">
+            <div class="circle"></div>
+            <div class="circle2"></div>
+            <div class="circle3"></div>
+        </div>
+
+        <div class="title" id="title">
+            <h1>RUSS EDWARDS SCHOOL AGRICULTURE QUIZ</h1>
+        </div>
+
+        <div id="highScores">
+            <div id="highScore1"><h2>1</h2><h2 id="highScoreName1">Nor</h2><h2 id=highScoreScore1>5000</h2></div>
+            <div id="highScore2"><h2>2</h2><h2 id="highScoreName2">Tem</h2><h2 id=highScoreScore2>4000</h2></div>
+            <div id="highScore3"><h2>3</h2><h2 id="highScoreName3">Rac</h2><h2 id=highScoreScore3>3000</h2></div>
+            <div id="highScore4"><h2>4</h2><h2 id="highScoreName4">Geo</h2><h2 id=highScoreScore4>2000</h2></div>
+            <div id="highScore5"><h2>5</h2><h2 id="highScoreName5">Wan</h2><h2 id=highScoreScore5>1000</h2></div>
+        </div>
+        `,
 }
 function replace(elementId, newValue) {
     var element = document.getElementById(elementId);
@@ -441,12 +637,19 @@ function questionGroups() {
         });
         document.getElementById("menu").appendChild(button);
     }
+        newGroupButton = document.createElement('button');
+        newGroupButton.innerHTML = "<h2>Add New Question Group</h2>";
+        newGroupButton.addEventListener('click', function() {
+            newGroup();
+        });
+        document.getElementById("menu").appendChild(newGroupButton);
+        focusUpdate();
         showMenuButtons(0,2);
-            focusUpdate();
+            
 }
 
 function showMenuButtons(min,max){
-    menuButtons = document.getElementsByTagName("button");
+    menuButtons = document.getElementById("menu").getElementsByTagName("button");
     for (let i = 0; i < menuButtons.length; i++){
         if( i>= minButton && i <= maxButton){
             menuButtons[i].style.display = "inline";
@@ -460,7 +663,7 @@ function showMenuButtons(min,max){
 }
 
 function showNextButtons() {
-    menuButtons = document.getElementsByTagName("button");
+    menuButtons = document.getElementById("menu").getElementsByTagName("button");
     remainingButtons = menuButtons.length - 1 - maxButton;
     if(remainingButtons >= 3){
         minButton +=3;
@@ -483,7 +686,7 @@ function showNextButtons() {
 }
 
 function showPreviousButtons() {
-    menuButtons = document.getElementsByTagName("button");
+    menuButtons = document.getElementById("menu").getElementsByTagName("button");
     previousButtons = minButton;
     if(previousButtons >= 3){
         minButton -=3;
@@ -491,8 +694,8 @@ function showPreviousButtons() {
     }else{
         if(previousButtons > 0 && previousButtons <3){
             
-            minButton += previousButtons;
-            maxButton += previousButtons;
+            minButton += 1;
+            maxButton += 1;
         }else{
             if(menuButtons.length>=3){
                 minButton = menuButtons.length-3;
@@ -552,6 +755,7 @@ function saveQuestion(){
     var answer2Value = document.getElementById('answer2').value;
     var answer3Value = document.getElementById('answer3').value;
     var answer4Value = document.getElementById('answer4').value;
+    var title = document.getElementById("titleText").value;
 
     var answers = [answer1Value, answer2Value, answer3Value, answer4Value];
 
@@ -566,20 +770,32 @@ function saveQuestion(){
     }
 
     questions.groups[groupIndex].questions[questionIndex].question = questionValue;
+    questions.groups[groupIndex].title = title;
 
     localStorage.setItem('questions', JSON.stringify(questions));
+}
+
+function saveScore(){
+    if(document.getElementById("editScoreName")){
+        letter1 = document.getElementById("letter1").innerHTML;
+        letter2 = document.getElementById("letter2").innerHTML;
+        letter3 = document.getElementById("letter3").innerHTML;
+        nameToSave = letter1 + letter2 + letter3;
+        scores[scoreToEdit][0] = nameToSave;
+        scores[scoreToEdit][1] = currentScore;
+        localStorage.setItem('questions', JSON.stringify(questions));
+    }
 }
 
 function resetEditQuestions(){
     groupIndex = 0;
     questionIndex = 0;
     currentQuestion = questions.groups[0].questions[0].question;
-    currentQuestionGroup = questions.groups[0];
 }
 
 function reset(){
-     visibleButtons = [];
-    buttons = document.getElementsByTagName("button");
+    visibleButtons = [];
+    buttons = document.getElementById("menu").getElementsByTagName("button");
     questionCount = 0;
     maxButton = 2;
     minButton = 0;
@@ -593,13 +809,7 @@ function reset(){
 
 
 
-
-
-
-
-
-
-
+console.log(questions);
 reset();
 
 

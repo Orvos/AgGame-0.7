@@ -3,8 +3,7 @@ if(localStorage.getItem("questions") == null){
     questions = {
         groups: [{
             "title": "Crops and Agriculture",
-            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
-            "enabled": true,
+            "highScores": [["NOR",5001],["TEM",4001],["RAC",3001],["GEO",2001],["WAN",1001],],
             "questions": [
                 {
                 "question": "Eggs from a Canadian grocery store are unfertilized.",
@@ -44,7 +43,7 @@ if(localStorage.getItem("questions") == null){
                 },
                 {
                 "question": "Chickens prefer to be housed in small group housing cages over free run.",
-                "answers": ["True", "False"],
+                "answers": ["False", "True"],
                 },
                 {
                 "question": "How many times a day is a dairy cow milked?",
@@ -119,64 +118,7 @@ if(localStorage.getItem("questions") == null){
                 "answers": ["25%", "50%", "10%", "65%"],
                 },
             ]
-        },
-    {
-            "title": "Test1",
-            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
-            "enabled": true,
-            "questions": [
-                {
-                "question": "This is a test question",
-                "answers": ["yes", "no", "maybe", "so"],
-                },
-                {
-                "question": "How much of Canada's grain land was seeded to canola in 2023?",
-                "answers": ["25%", "50%", "10%", "65%"],
-                },
-            ]
-        },{
-            "title": "Test2",
-            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
-            "enabled": true,
-            "questions": [
-                {
-                "question": "This is a test question",
-                "answers": ["yes", "no", "maybe", "so"],
-                },
-                {
-                "question": "How much of Canada's grain land was seeded to canola in 2023?",
-                "answers": ["25%", "50%", "10%", "65%"],
-                },
-            ]
-        },{
-            "title": "Test3",
-            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
-            "enabled": true,
-            "questions": [
-                {
-                "question": "This is a test question",
-                "answers": ["yes", "no", "maybe", "so"],
-                },
-                {
-                "question": "How much of Canada's grain land was seeded to canola in 2023?",
-                "answers": ["25%", "50%", "10%", "65%"],
-                },
-            ]
-        },{
-            "title": "Test4",
-            "description": "Questions created by the Agriculture students from 2023-2024 at Assiniboine Community College",
-            "enabled": true,
-            "questions": [
-                {
-                "question": "This is a test question",
-                "answers": ["yes", "no", "maybe", "so"],
-                },
-                {
-                "question": "How much of Canada's grain land was seeded to canola in 2023?",
-                "answers": ["25%", "50%", "10%", "65%"],
-                },
-            ]
-        },]
+        }]
     }
 }else{
     questions = JSON.parse(localStorage.getItem("questions"));

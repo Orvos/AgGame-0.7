@@ -65,6 +65,15 @@ function controllerInput(){
 
         if(buttons[0].value == 1){
             if(bluePressed == false){
+                keyRed();
+            }
+            redPressed = true;
+        }else{
+            redPressed = false;
+        }
+
+        if(buttons[1].value == 1){
+            if(bluePressed == false){
                 keyBlue();
             }
             bluePressed = true;
@@ -72,23 +81,14 @@ function controllerInput(){
             bluePressed = false;
         }
 
-        if(buttons[1].value == 1){
+
+        if(buttons[2].value == 1){
             if(greenPressed == false){
                 keyGreen();
             }
             greenPressed = true;
         }else{
             greenPressed = false;
-        }
-
-
-        if(buttons[2].value == 1){
-            if(redPressed == false){
-                keyRed();
-            }
-            redPressed = true;
-        }else{
-            redPressed = false;
         }
 
 
@@ -126,40 +126,36 @@ document.addEventListener("keydown", function(event) {
     const key = event.key;
     switch (key) {
         case "ArrowLeft":
-        case "a":
             keyLeft();
             break;
 
         case "ArrowUp":
-        case "w":
             keyUp();
             break;
 
         case "ArrowRight":
-        case "d":
             keyRight();
             break;
 
         case "ArrowDown":
-        case "s":
             keyDown();
             break;
 
         case "1":
             keyRed();
-
+            break;
         case "2":
             keyBlue();
-
+            break;
         case "3":
             keyGreen();
-
+            break;
         case "4":
             keyYellow();
-
+            break;
         case "Escape":
             keyWhite();
-        
+            break;
         default:
             break;
     }
@@ -170,18 +166,23 @@ document.addEventListener("keydown", function(event) {
 
 function keyUp(){
     focusPrevious();
+    previousLetter();
 }
 
 function keyDown(){
     focusNext();
+    nextLetter();
 }
 
 function keyLeft(){
-
+    leftLetter();
+    previousScoreGroup();
 }
 
 function keyRight(){
     document.activeElement.click();
+    rightLetter();
+    nextScoreGroup();
 }
 
 function keyRed(){
@@ -190,6 +191,10 @@ function keyRed(){
     }else if(document.getElementById("currentTFAnswer1")!=null){
         document.getElementById("currentTFAnswer1").click();
     }
+    if(document.getElementById("highScores")!=null){
+        home();
+    }
+
 }
 
 function keyBlue(){
@@ -197,6 +202,9 @@ function keyBlue(){
         document.getElementById("currentAnswer2").click();
     }else if(document.getElementById("currentTFAnswer2")!=null){
         document.getElementById("currentTFAnswer2").click();
+    }
+    if(document.getElementById("highScores")!=null){
+        home();
     }
 }
 
@@ -206,6 +214,9 @@ function keyGreen(){
     }else if(document.getElementById("currentTFAnswer1")!=null){
         document.getElementById("currentTFAnswer1").click();
     }
+    if(document.getElementById("highScores")!=null){
+        home();
+    }
 }
 
 function keyYellow(){
@@ -214,14 +225,15 @@ function keyYellow(){
     }else if(document.getElementById("currentTFAnswer2")!=null){
         document.getElementById("currentTFAnswer2").click();
     }
-    
+    if(document.getElementById("highScores")!=null){
+        home();
+    }
 }
 
 function keyWhite(){
-    quiz = document.getElementById("quiz");
-    if(quiz){
+
         home();
-    }
+    
 }
 
 function keyWhite2(){
